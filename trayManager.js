@@ -86,11 +86,11 @@ async function getConversations() {
   return conversations;
 }
 
-ipcMain.on('call', (e, userId) => {
+ipcMain.on('send-message', (e, data) => {
   // TODO: forward request to a dedicated hidden BrowserWindow that is using the SDK
   // This window is able to use WebRTC. This probably means that all SDK calls should
   // go through that window rather than the main thread.
-  _client.makeCall(userId);
+  _client.addTextItem(data.convId, data.content);
 });
 
 module.exports = {

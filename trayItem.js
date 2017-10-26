@@ -154,7 +154,8 @@ class TrayItem {
     });
 
     this._client.addEventListener('itemAdded', evt => {
-      if (evt.item.convId === this._conversation.convId) {
+      if (evt.item.convId === this._conversation.convId &&
+        evt.item.creatorId !== this._client.loggedOnUser.userId) {
         // New item has been added, assume user doens't have the pop-down open,
         // so show the unread indicator
         this.hasUnread = true;
