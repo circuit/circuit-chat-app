@@ -1,20 +1,19 @@
 {
-  "sandbox":
-    "options": {
+  "domains": [
+    {
       "domain": "circuitsandbox.net",
-      "client_id": "<your client_id>",
-      "client_secret": "<your client_secret>"
-      "autoRenewToken": true
+      "client_id": "",
+      "client_secret": "",
+      "redirectUri": "com.circuit-chat.app:/callback",
+      "scope": "ALL"
     },
-    "conversation": ""
-  },
-  "production":
-    "options": {
+    {
       "domain": "eu.yourcircuit.com",
-      "client_id": "<your client_id>",
-      "client_secret": "<your client_secret>"
-      "autoRenewToken": true
-    },
-    "conversation": ""
-  }
+      "client_id": "",
+      "client_secret": "",
+      "redirectUri": "com.circuit-chat.app:/callback",
+      "scope": "ALL"
+    }
+  ],
+  "sdkLogLevel": 4
 }

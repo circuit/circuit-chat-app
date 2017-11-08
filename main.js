@@ -1,52 +1,92 @@
 const {app, BrowserWindow, ipcMain} = require('electron')
-const path = require('path')
-const Circuit = require('circuit-sdk');
+const path = require('path');
+const AutoLaunch = require('auto-launch');
 const settings = require('electron-settings');
-const config = require('./config')[process.env.system || 'sandbox'];
-const oauth = require('./oauth')(config.oauth);
+const Circuit = require('circuit-sdk');
+const config = require('./config');
+const SdkProxy = require('./sdkProxy');
 const TrayManager = require('./trayManager');
 const EventEmitter = require('events');
 const emitter = new EventEmitter();
 
-let window;
+// Expose to renderers via remote
+global.isDevMode = !!process.execPath.match(/dist[\\/]electron/i);
+global.sdkLogLevel = config.sdkLogLevel || Circuit.Enums.LogLevel.Debug;
 
-Circuit.logger.setLevel(Circuit.Enums.LogLevel.Debug);
+let domain;
+let sdkProxy;
 
-// Create Circuit SDK client instance
-let client = new Circuit.Client({
-  client_id: config.oauth.client_id,
-  domain: config.oauth.domain
-});
+// App ready lifecycle hook. Entry point for app.
+app.on('ready', run);
 
-// temporary: since _client.getConversationsByIds doesn't return the conversations in the same order
-client.getConversationsByIds = convIds => Promise.all(convIds.map(client.getConversationById));
-
-function logon() {
-  return oauth.getToken()
-    .then(token => client.logon({accessToken: token}))
-    .then(user => console.log(`Logged on as ${user.displayName}`))
-    .catch(err => {
-      if (err && err.message !== 'window was closed by user') {
-        // Session timed out, but token is still valid. This may happen if the
-        // OAuth TTL is shorter than the session timeout, especially if the user
-        // did not choose `This is a private computer` on the login page.
-        oauth.clearToken();
-        return logon();
-      }
-      return Promise.reject(err);
-    });
-}
-
-emitter.on('logon-request', logon);
-
-app.on('ready', async () => {
+async function run() {
   try {
-    await TrayManager.create(client, config, emitter);
-    await logon()
+    initializeSettings();
+
+    // Class proxying Circuit API calls to renderer process. The reason
+    // a renderer process is used for Circuit API calls is to be able
+    // to use Chromiums WebRTC stack and therefore make Circuit calls.
+    const oauthConfig = config.domains.find(item => item.domain === domain);
+    sdkProxy = new SdkProxy(oauthConfig);
+
+    // Create Circuit icon and conversation avatars in tray. TrayManager
+    // will start initialization when user is logged on to Circuit.
+    // async due to image processing
+    await TrayManager.init(sdkProxy, emitter);
+
+    // Create hidden window as Circuit API wrapper. Using a renderer instead
+    // of the main process allows using Chromium's WebRTC stack to make
+    // Circuit calls.
+    await logon();
   } catch (err) {
     console.error(err);
-    return;
   }
+}
+
+// Logon
+function logon() {
+  return sdkProxy.logon()
+    .then(user => console.log(`Logged on as ${user.displayName}`))
+    .catch(console.error);
+}
+
+// Invoked by tray
+emitter.on('logon', logon);
+
+// Logout invoked by tray
+emitter.on('logout', () => {
+  let name = sdkProxy.user.displayName;
+  sdkProxy.logout()
+    .then(() => console.log(`${name} logged out`))
+    .catch(console.error);
+});
+
+function initializeSettings() {
+  if (!settings.get('domain')) {
+    settings.set('domain', config.domains[0].domain);
+    settings.set('tray', {
+      favorites: true,
+      custom: []
+    });
+  }
+  domain = settings.get('domain');
+}
+
+// autolaunch
+let appLauncher = new AutoLaunch({
+    name: 'Circuit Chat',
+    path: app.getPath('exe'),
+    isHidden: false,
+    mac: {
+        useLaunchAgent: true
+    }
+});
+appLauncher.enable();
+
+ipcMain.on('re-login', () => {
+  sdkProxy.logout()
+    .then(run)
+    .catch(console.error);
 });
 
 app.on('window-all-closed', () => {
@@ -55,4 +95,4 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
-})
+});

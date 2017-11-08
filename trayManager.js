@@ -1,47 +1,48 @@
 'use strict';
 
-const path = require('path');
-const {ipcMain, Tray, nativeImage} = require('electron');
-const sharp = require('sharp');
-const Circuit = require('circuit-sdk');
+const {ipcMain} = require('electron');
+const settings = require('electron-settings');
+const Circuit = require('circuit-sdk'); // Load only for enums and constants
 const TrayItem = require('./trayItem');
-const CircuitTray = require('./circuitTray');
+const TrayCircuit = require('./trayCircuit');
 
-let _client, _config, _emitter;
+let _emitter, _sdkProxy, _circuitTray;
+
+// List of TrayItem instances
 let _trayItems = [];
 
-async function create(client, config, emitter) {
-  _client = client;
-  _config = config;
+// Create the main Circuit tray and the individual user tray items
+async function init(sdkProxy, emitter) {
+  _sdkProxy = sdkProxy;
   _emitter = emitter;
 
   // Create Circuit tray icon
-  await CircuitTray.create(client, emitter);
+  _circuitTray && _circuitTray.destroy();
+  _circuitTray = await TrayCircuit.create(emitter, sdkProxy);
 
-  client.addEventListener('connectionStateChanged', evt => {
-    CircuitTray.setTitle('');
-    CircuitTray.updateMenu();
+  // Emitted when logon is finished and user object is available
+  sdkProxy.on('userLoggedOn', createTrayItems);
 
-    if (evt.state === Circuit.Enums.ConnectionState.Disconnected) {
-      removeTrays();
-    } else if (evt.state === Circuit.Enums.ConnectionState.Connected) {
-      // Get loggedOn user since 'loggedOnUser' property is not yet available
-      // right after the connected event.
-      _client.getLoggedOnUser().then(init);
-    } else if (evt.state === Circuit.Enums.ConnectionState.Reconnecting) {
-      CircuitTray.setTitle(evt.state);
-    }
+  sdkProxy.on('connectionStateChanged', evt => {
+      if (evt.state === Circuit.Enums.ConnectionState.Disconnected) {
+        removeTrays();
+      } else if (evt.state === Circuit.Enums.ConnectionState.Connected) {
+        if (_sdkProxy.user && !_trayItems) {
+          // This is a subsequent re-connect
+          createTrayItems();
+        }
+      }
   });
 }
 
-async function init() {
+// Create the tray items
+async function createTrayItems() {
   removeTrays();
-
   let conversations = await getConversations();
 
   // Initialize the trayItems in parallel
   let promises = conversations.reverse().map(c => {
-    let trayItem = new TrayItem(c, _client);
+    let trayItem = new TrayItem(c, _sdkProxy, _emitter);
     _trayItems.push(trayItem);
     return trayItem.init();
   });
@@ -56,44 +57,39 @@ function removeTrays() {
   _trayItems = [];
 }
 
+// Get the favorties or custom configured conversations
 async function getConversations() {
-  let conversations;
+  let conversations = settings.get('tray', {
+    favorites: true,
+    custom: []
+  });
 
-  if (_config.conversations && _config.conversations.length) {
-    // Conversations are defined, use those
-    conversations = await _client.getConversationsByIds(_config.conversations);
+  if (!conversations.favorites && conversations.custom.some(c => !!c)) {
+    // Use custom conversations
+    conversations = await _sdkProxy.getConversationsByIds(conversations.custom);
   } else {
     // No conversations defined, so take the first five direct favorites
-    // Note there is a bug in the SDK right now in which the order of the
-    // returned conversations doesn't match the order of the passed in IDs.
-    let conversationsIds = await _client.getFavoriteConversationIds();
-    conversations = await _client.getConversationsByIds(conversationsIds);
-    conversations = conversations.slice(0, 5);
+    let conversationsIds = await _sdkProxy.getFavoriteConversationIds();
+    conversations = await _sdkProxy.getConversationsByIds(conversationsIds);
   }
 
   // Only support direct conversations at the moment
   conversations = conversations.filter(c => c.type === Circuit.Enums.ConversationType.DIRECT);
+  conversations = conversations.slice(0, 5);
 
   // Get the peer user object for each conversation and attach it to the conversation
   let userIds = conversations
-    .map(c => c.participants[0] === _client.loggedOnUser.userId ? c.participants[1] : c.participants[0])
+    .map(c => c.participants[0] === _sdkProxy.user.userId ? c.participants[1] : c.participants[0])
 
-  let users = await _client.getUsersById(userIds);
-
+  let users = await _sdkProxy.getUsersById(userIds);
   for (let i = 0; i < conversations.length; i++) {
     conversations[i].peerUser = users[i];
   }
   return conversations;
 }
 
-ipcMain.on('send-message', (e, data) => {
-  // TODO: forward request to a dedicated hidden BrowserWindow that is using the SDK
-  // This window is able to use WebRTC. This probably means that all SDK calls should
-  // go through that window rather than the main thread.
-  _client.addTextItem(data.convId, data.content);
-});
+ipcMain.on('re-initialize', async () => createTrayItems());
 
 module.exports = {
-    create,
     init
 };

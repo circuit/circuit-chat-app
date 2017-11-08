@@ -68,3 +68,5 @@ config.json
 
 avatars/*
 !avatars/.gitkeep
+
+dist

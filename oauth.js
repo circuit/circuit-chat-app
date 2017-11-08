@@ -1,3 +1,9 @@
+/*
+ * Module to perform OAuth 2.0 Authorization Code authentication
+ * with Circuit. Return the access token that can be used to
+ * logon to Circuit.
+ */
+
 'use strict';
 
 const settings = require('electron-settings');
@@ -43,8 +49,7 @@ module.exports = function (config) {
     let token = settings.get('token');
     if (token && token.access_token) {
       return fetch(oauthConfig.tokenUrl + '/' + token.access_token)
-        .then(() =>
-        token.access_token)
+        .then(() => token.access_token)
         .catch(err => {
           console.log(`Token was invalid. Request new token.`, err);
           return getAccessToken();
