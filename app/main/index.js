@@ -15,6 +15,7 @@ global.sdkLogLevel = config.sdkLogLevel || Circuit.Enums.LogLevel.Debug;
 
 let domain;
 let sdkProxy;
+let initializing = true;
 
 // App ready lifecycle hook. Entry point for app.
 app.on('ready', run);
@@ -29,6 +30,11 @@ async function run() {
     const oauthConfig = config.domains.find(item => item.domain === domain);
     sdkProxy = new SdkProxy(oauthConfig);
 
+    sdkProxy.on('userLoggedOn', () => {
+      initializing = false;
+      console.log('Done initializing');
+    });
+    
     // Create Circuit icon and conversation avatars in tray. TrayManager
     // will start initialization when user is logged on to Circuit.
     // async due to image processing
@@ -89,10 +95,9 @@ ipcMain.on('re-login', () => {
     .catch(console.error);
 });
 
-app.on('window-all-closed', () => {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit()
+app.on('before-quit', e => {
+  if (initializing) {
+    console.log('Prevent quitting during initializing');    
+    e.preventDefault();
   }
 });

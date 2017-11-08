@@ -55,7 +55,7 @@ module.exports = function (config) {
           return getAccessToken();
         });
     }
-    return getAccessToken()
+    return getAccessToken();
   }
 
   function clearToken() {
@@ -74,4 +74,4 @@ module.exports = function (config) {
     clearToken: clearToken,
     refreshToken: refreshToken
   };
-}
+};

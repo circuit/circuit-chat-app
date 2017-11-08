@@ -206,7 +206,7 @@ class TrayItem {
     // Only close the window on blur if dev tools isn't opened
     this._window.on('blur', () => {
       if (!this._window.webContents.isDevToolsOpened()) {
-        this._window.hide()
+        this._window.hide();
       }
     });
 
@@ -223,28 +223,28 @@ class TrayItem {
   // Toggle the window
   toggleWindow() {
     if (this._window.isVisible()) {
-      this.hideWindow()
+      this.hideWindow();
     } else {
-      this.showWindow()
+      this.showWindow();
     }
   }
 
   // Show the window
   showWindow() {
-    const trayPos = this._tray.getBounds()
-    const windowPos = this._window.getBounds()
-    let x, y = 0
+    const trayPos = this._tray.getBounds();
+    const windowPos = this._window.getBounds();
+    let x, y = 0;
     if (process.platform == 'darwin') {
-      x = Math.round(trayPos.x + (trayPos.width / 2) - (windowPos.width / 2))
-      y = Math.round(trayPos.y + trayPos.height)
+      x = Math.round(trayPos.x + trayPos.width / 2 - windowPos.width / 2);
+      y = Math.round(trayPos.y + trayPos.height);
     } else {
-      x = Math.round(trayPos.x + (trayPos.width / 2) - (windowPos.width / 2))
-      y = Math.round(trayPos.y + trayPos.height * 10)
+      x = Math.round(trayPos.x + trayPos.width / 2 - windowPos.width / 2);
+      y = Math.round(trayPos.y - windowPos.height - 1);
     }
 
-    this._window.setPosition(x, y, false)
-    this._window.show()
-    this._window.focus()
+    this._window.setPosition(x, y, false);
+    this._window.show();
+    this._window.focus();
   }
 
   hideWindow() {

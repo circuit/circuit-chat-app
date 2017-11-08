@@ -67,3 +67,5 @@ app/config.json
 !.vscode/launch.json
 
 dist
+
+yarn.lock
