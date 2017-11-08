@@ -60,7 +60,7 @@ typings/
 .DS_Store
 
 # Configuration file
-config.json
+app/config.json
 
 # VS code launch config
 .vscode/*
