@@ -18,8 +18,8 @@ Chat with your favorite users quickly via this native tray application. This nat
 
 ## Screenshots
 <div style="display:inline">
-<img height="400px" src="https://dl.dropboxusercontent.com/s/txmtj7ezf3bm58m/mac.png?dl=0"/>
-<img height="400px" src="https://dl.dropboxusercontent.com/s/9hyqk00wu9js8mu/win10.png?dl=0"/>
+<img height="350px" src="https://dl.dropboxusercontent.com/s/txmtj7ezf3bm58m/mac.png?dl=0"/>
+<img height="350px" src="https://dl.dropboxusercontent.com/s/9hyqk00wu9js8mu/win10.png?dl=0"/>
 </div>
 
 > On Windows the tray is probably not the best solution for this. Taskbar might be better.
