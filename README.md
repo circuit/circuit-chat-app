@@ -1,16 +1,15 @@
 # Circuit Chat app
 
-Chat with your favorite users quickly via this native tray application. This native application (Windows & Mac) uses the electron framework to creates tray icons for up to five users and allow chat and calling via Circuit.
+Chat with your favorite users quickly via this native (Windows & Mac) tray application built with electron and the Circuit JS SDK. Trays for up to five users are created which allow chat and calls via Circuit.
 
 ## Features
 
-* Configure up to 5 direct conversations to show as tray. By default the first 5 favorites are used.
-* Show presence in tray avatar and detailed presence on chat window.
-* Chat :)
-* Make direct calls
-* Mac and Windows (Linux should work too, but not tested)
+* Configure up to 5 direct conversations to show as tray. If none configured the first 5 favorites are used.
+* Show presence status in tray avatar and detailed presence in chat window.
+* Chat and direct calls
+* Cross platform: Mac and Windows (Linux should work too, but not tested)
 
-## Goals of this example
+## Goals
 * Usage of [Circuit JS SDK](https://github.com/circuit/circuit-sdk) in a desktop app based on [electron](https://electron.atom.io/)
 * Specifically how to use the SDK in a renderer process so that the Circuit WebRTC APIs can be used
 * Demonstrate simple cross-platform implementation using electron
@@ -32,6 +31,9 @@ This chat app opens individual chat windows for each user which means either eve
 
 The suggested OAuth authentication method for desktop application is Authorization Code, and since the browser JS SDK does not support the authentication part is done in the main process (/main/oauth.js). Once authenticated and the access token is available, the token is handed over to a proxy class that acts as intermediate between main process APIs calls and the Circuit SDK renderer.
 
+For the two-way binding and rendering of the chat window [hyperHTML](https://github.com/WebReflection/hyperHTML) is used.
+
+[electron-builder](https://github.com/electron-userland/electron-builder) is used to build and package the app as Mac and Windows installers.
 
 ### Components
 
@@ -68,6 +70,6 @@ The suggested OAuth authentication method for desktop application is Authorizati
 
 
 ## Packaged installer downloads
-* [Mac](https://dl.dropboxusercontent.com/s/5mja0yclj5v0bmq/Circuit%20Chat-1.0.0.dmg?dl=0)
-* [Windows](https://dl.dropboxusercontent.com/s/9hyqk00wu9js8mu/win10.png?dl=0) (only Windows 10 tested)
+* [Mac](https://goo.gl/t2Aw9y)
+* [Windows](https://goo.gl/5S94pT) (only Windows 10 tested)
 
