@@ -5,8 +5,10 @@ Chat with your favorite users quickly via this native (Windows & Mac) tray appli
 ## Features
 
 * Configure up to 5 direct conversations to show as tray. If none configured the first 5 favorites are used.
-* Show presence status in tray avatar and detailed presence in chat window.
 * Chat and direct calls
+* Show presence status in tray avatar and detailed presence in chat window.
+* Show unread indicator on tray avatar
+* Quick link to Circuit conversation. Click on name or avatar in chat window.
 * Cross platform: Mac and Windows (Linux should work too, but not tested)
 
 ## Goals
