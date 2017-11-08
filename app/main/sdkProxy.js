@@ -1,5 +1,5 @@
-const {BrowserWindow, ipcMain} = require('electron')
-const path = require('path')
+const {BrowserWindow, ipcMain} = require('electron');
+const path = require('path');
 const EventEmitter = require('events');
 const Circuit = require('circuit-sdk');
 const oauth = require('./oauth');
@@ -154,7 +154,7 @@ class SdkProxy extends EventEmitter {
         height: 900,
         show: isDevMode
       });
-      this._win.loadURL(`file:///${__dirname}/circuit/index.html`);
+      this._win.loadURL(`file://${path.join(__dirname, '../renderer/circuit/index.html')}`);
 
       // Open dev tools in development mode
       isDevMode && this._win.webContents.openDevTools();

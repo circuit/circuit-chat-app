@@ -13,9 +13,12 @@ ipcRenderer.on('logon-request', async (sender, oauth, token) => {
     domain: oauth.domain
   });
 
-  // temporary: since _client.getConversationsByIds doesn't yet return the conversations in the same order
+  // temporary until SDK is fixed
   client.getConversationsByIds = convIds => Promise.all(convIds.map(client.getConversationById));
   client.getUsersById = userIds => Promise.all(userIds.map(client.getUserById));
+  Array.prototype.contains = function () {
+    return false;
+  };
 
   proxySdkEvents();
   await logon(token);

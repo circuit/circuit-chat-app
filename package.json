@@ -3,14 +3,17 @@
   "productName": "Circuit Chat",
   "version": "1.0.0",
   "description": "Cicuit tray chat app written with Circuit JS SDK",
-  "main": "main.js",
+  "main": "./app/main",
   "scripts": {
-    "start": "electron .",
+    "start": "electron app",
+    "reinstall": "rm -rf node_modules; rm -rf app/node_modules; npm install",
     "postinstall": "electron-builder install-app-deps",
-    "dist": "build"
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "build": {
     "appId": "com.unify.circuit-chat",
+    "asar": false,
     "mac": {
       "category": "public.app-category.business"
     },
@@ -19,7 +22,7 @@
       "icon": "build/icon.ico"
     }
   },
-  "repository": "https://github.com/circuit/circuit-tray-app",
+  "repository": "https://github.com/circuit/circuit-chat-app",
   "keywords": [
     "Circuit",
     "WebRTC",
@@ -33,16 +36,5 @@
   "devDependencies": {
     "electron": "^1.8.1",
     "electron-builder": "^19.35.1"
-  },
-  "dependencies": {
-    "auto-launch": "^5.0.1",
-    "circuit-sdk": "^1.2.1900",
-    "electron-oauth2": "git://github.com/rogeru/electron-oauth2.git#master",
-    "electron-settings": "^3.1.3",
-    "hyperhtml": "^1.12.2",
-    "node-fetch": "^1.7.3",
-    "opn": "^5.1.0",
-    "request": "^2.83.0",
-    "sharp": "^0.18.4"
   }
 }

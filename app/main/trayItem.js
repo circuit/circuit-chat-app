@@ -6,7 +6,7 @@ const sharp = require('sharp');
 const opn = require('opn');
 const settings = require('electron-settings');
 const request = require('request').defaults({encoding: null});
-const {BrowserWindow, ipcMain, Tray, nativeImage} = require('electron');
+const {app, BrowserWindow, ipcMain, Tray, nativeImage} = require('electron');
 const Circuit = require('circuit-sdk');
 
 /**
@@ -51,7 +51,7 @@ class TrayItem {
 
       // Download the user's avatar, resize it, make round corners, position it,
       // convert to png for transparency, convert it to a nativeImage and show it.
-      let file = 'file://' + __dirname + '/avatars/' + this._conversation.peerUser.userId;
+      let file = `${app.getPath('temp')}circuit-chat-${this._conversation.peerUser.userId}`;
 
       // Download the user's avatar
       await this.download(this._conversation.peerUser.avatar, file);
@@ -66,7 +66,7 @@ class TrayItem {
         .toBuffer();
 
       // Buffer for call icon
-      this._callBuffer = await sharp('file://' + __dirname + '/assets/call.png')
+      this._callBuffer = await sharp(`${__dirname}/../assets/call.png`)
         .resize(18, 18)
         .overlayWith(roundedCorners, {cutout: true})
         .extend({top: 1, bottom: 1, left: 2, right: 2})
@@ -128,7 +128,12 @@ class TrayItem {
             'bearer': this._sdkProxy.accessToken
           }
         };
-        request(uri, auth).pipe(fs.createWriteStream(filename)).on('close', resolve);
+        request(uri, auth)
+  .pipe(fs.createWriteStream(filename))
+  .on('finish', resolve)
+;
+
+     //   request(uri, auth).pipe(fs.createWriteStream(filename)).on('close', resolve);
       });
     });
   }
@@ -196,7 +201,7 @@ class TrayItem {
     })
 
     // Tell the popup window to load our index.html file
-    this._window.loadURL('file://' + __dirname + '/chat/index.html');
+    this._window.loadURL(`file://${path.join(__dirname, '../renderer/chat/index.html')}`);
 
     // Only close the window on blur if dev tools isn't opened
     this._window.on('blur', () => {

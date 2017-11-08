@@ -1,7 +1,8 @@
 'use strict';
 
-const opn = require('opn');
 const {BrowserWindow, ipcMain, Menu, nativeImage, Tray} = require('electron');
+const opn = require('opn');
+const path = require('path');
 const sharp = require('sharp');
 const settings = require('electron-settings');
 const Circuit = require('circuit-sdk');
@@ -17,7 +18,7 @@ async function create(emitter, sdkProxy) {
   _sdkProxy = sdkProxy;
 
   // Create Circuit tray
-  let icon = await sharp('file://' + __dirname + '/assets/logo.png')
+  let icon = await sharp(`${__dirname}/../assets/32x32.png`)
     .resize(18, 18)
     .background({r: 0, g: 0, b: 0, alpha: 0})
     .extend({top: 1, bottom: 1, left: 2, right: 2})
@@ -111,7 +112,7 @@ function showPreferences() {
     resizable: false,
   });
 
-  window.loadURL('file://' + __dirname + '/preferences/index.html');
+  window.loadURL(`file://${path.join(__dirname, '../renderer/preferences/index.html')}`);
 
   window.show();
   window.focus();
@@ -125,7 +126,7 @@ function showAbout() {
     resizable: false,
   });
 
-  window.loadURL('file://' + __dirname + '/about/index.html');
+  window.loadURL(`file://${path.join(__dirname, '../renderer/about/index.html')}`);
 
   window.show();
   window.focus();
