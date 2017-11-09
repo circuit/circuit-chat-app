@@ -51,7 +51,7 @@ class TrayItem {
       const isMac = process.platform === 'darwin';
       const iconSize = isMac ? 18 : 19;
       const iconPadding = isMac ? {top: 1, bottom: 1, left: 2, right: 2} : {top: 0, bottom: 0, left: 0, right: 0};
-
+      
       // Download the user's avatar, resize it, make round corners, position it,
       // convert to png for transparency, convert it to a nativeImage and show it.
       let file = `${app.getPath('temp')}circuit-chat-${this._conversation.peerUser.userId}`;
@@ -132,11 +132,8 @@ class TrayItem {
           }
         };
         request(uri, auth)
-  .pipe(fs.createWriteStream(filename))
-  .on('finish', resolve)
-;
-
-     //   request(uri, auth).pipe(fs.createWriteStream(filename)).on('close', resolve);
+          .pipe(fs.createWriteStream(filename))
+          .on('finish', resolve);
       });
     });
   }
@@ -265,7 +262,10 @@ class TrayItem {
     ipcMain.on('navigate', (e, userId, dest) => {
       if (this._sdkProxy.user.userId === userId) {
         if (dest && dest.convId) {
-          opn(`https://${this._domain}/#/conversation/${dest.convId}`, {app: 'google chrome'});
+          const isMac = process.platform === 'darwin';
+          const isWin = process.platform === 'win32';
+          const chrome = isMac ? 'google chrome' : isWin ? 'chrome' : 'google-chrome';
+          opn(`https://${this._domain}/#/conversation/${dest.convId}`, {app: chrome});
         }
       }
     });

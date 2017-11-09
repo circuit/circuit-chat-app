@@ -9,7 +9,7 @@ const Circuit = require('circuit-sdk');
 
 let _tray;
 let _emitter;
-let _sdkProxy
+let _sdkProxy;
 let _signinTemplate, _signoutTemplate;
 let _iconBuffer, _iconBufferGrey;
 
@@ -17,7 +17,7 @@ const isMac = process.platform === 'darwin';
 const isWin = process.platform === 'win32';
 const iconSize = isMac ? 18 : 19;
 const iconPadding = isMac ? {top: 1, bottom: 1, left: 2, right: 2} : {top: 0, bottom: 0, left: 0, right: 0};
-const chrome = isMac ? 'google chrome' : (isWin ? 'chrome' : 'google-chrome');
+const chrome = isMac ? 'google chrome' : isWin ? 'chrome' : 'google-chrome';
 
 async function create(emitter, sdkProxy) {
   _emitter = emitter;
