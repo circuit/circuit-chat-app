@@ -58,7 +58,6 @@ body,.msg,.toolbar,form {
   background-color: #374455;
   color: white;
   padding-right: 0;
-  line-height: 0.5em;
   justify-content: space-between;
   padding: 5px;
 }
@@ -71,7 +70,9 @@ body,.msg,.toolbar,form {
 
 .contact {
   flex-grow: 1;
-  margin-left: 5px;
+  margin-left: 6px;
+  margin-right: 6px;
+  min-width: 0px;
 }
 
 .contact-div {
@@ -82,13 +83,18 @@ body,.msg,.toolbar,form {
 .contact-name {
   font-weight: normal;
   font-size: 1em;
-  margin-top: 5px;
+  margin-top: -2px;
+  margin-bottom: 0px;
   white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .contact-status {
   font-size: .75em;
   margin-bottom: 3px;
+  margin-top: -5px;
+  margin-bottom: -3px;
 }
 
 .contact-actions {
@@ -107,6 +113,7 @@ body,.msg,.toolbar,form {
 .msg {
   position: relative;
   margin-bottom: 1em;
+  word-wrap: break-word;
 }
 
 
@@ -120,7 +127,7 @@ blockquote {
   line-height: 16px;
 }
 
-.msg-them blockquote::after, .msg-me blockquote::before {
+.msg-me blockquote::after, .msg-them blockquote::before {
   position: absolute;
   display: block;
   content: '';
@@ -128,33 +135,33 @@ blockquote {
   height: 0;
 }
 
-.msg-them blockquote {
+.msg-me blockquote {
   background-color: #FFBB73;
 }
 
-.msg-them blockquote::after {
+.msg-me blockquote::after {
   border: .5em solid #FFBB73;
   border-color: #FFBB73 transparent transparent #FFBB73;
   top: .5em;
   right: -1em;
 }
 
-.msg-me blockquote {
+.msg-them blockquote {
   background-color: #0099cc; margin-left: 1em;
 }
 
-.msg-me blockquote::before {
+.msg-them blockquote::before {
   border: .5em solid #0099cc;
   border-color: #0099cc #0099cc transparent transparent;
   top: .5em;
   left: -1em;
 }
 
-.msg-them {
+.msg-me {
   justify-content: flex-end;
 }
 
-.msg-them blockquote {
+.msg-me blockquote {
   order: -1;
   margin-right: 1em;
 }

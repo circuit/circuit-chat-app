@@ -1,4 +1,4 @@
-const {app, BrowserWindow, ipcMain} = require('electron')
+const {app, BrowserWindow, ipcMain, Menu} = require('electron')
 const path = require('path');
 const AutoLaunch = require('auto-launch');
 const settings = require('electron-settings');
@@ -24,6 +24,8 @@ async function run() {
   try {
     initializeSettings();
 
+    createMenu();
+
     // Class proxying Circuit API calls to renderer process. The reason
     // a renderer process is used for Circuit API calls is to be able
     // to use Chromiums WebRTC stack and therefore make Circuit calls.
@@ -34,7 +36,7 @@ async function run() {
       initializing = false;
       console.log('Done initializing');
     });
-    
+
     // Create Circuit icon and conversation avatars in tray. TrayManager
     // will start initialization when user is logged on to Circuit.
     // async due to image processing
@@ -78,6 +80,36 @@ function initializeSettings() {
   domain = settings.get('domain');
 }
 
+// Create the Application's main menu
+function createMenu() {
+  var template = [{
+    label: "Edit",
+    submenu: [
+      {role: 'undo'},
+      {role: 'redo'},
+      {type: 'separator'},
+      {role: 'cut'},
+      {role: 'copy'},
+      {role: 'paste'},
+      {role: 'selectall'},
+      {type: 'separator'},
+      {
+        role: 'help',
+        submenu: [
+          {
+            label: 'Github repo',
+            click () { require('electron').shell.openExternal('https://github.com/circuit/circuit-chat-app') }
+          }
+        ]
+      },
+      {type: 'separator'},
+      {role: 'quit'}
+    ]
+  }];
+
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+}
+
 // autolaunch
 let appLauncher = new AutoLaunch({
     name: 'Circuit Chat',
@@ -97,7 +129,7 @@ ipcMain.on('re-login', () => {
 
 app.on('before-quit', e => {
   if (initializing) {
-    console.log('Prevent quitting during initializing');    
+    console.log('Prevent quitting during initializing');
     e.preventDefault();
   }
 });

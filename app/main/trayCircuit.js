@@ -13,29 +13,35 @@ let _sdkProxy
 let _signinTemplate, _signoutTemplate;
 let _iconBuffer, _iconBufferGrey;
 
+const isMac = process.platform === 'darwin';
+const isWin = process.platform === 'win32';
+const iconSize = isMac ? 18 : 19;
+const iconPadding = isMac ? {top: 1, bottom: 1, left: 2, right: 2} : {top: 0, bottom: 0, left: 0, right: 0};
+const chrome = isMac ? 'google chrome' : (isWin ? 'chrome' : 'google-chrome');
+
 async function create(emitter, sdkProxy) {
   _emitter = emitter;
   _sdkProxy = sdkProxy;
 
   // Create Circuit tray
   let icon = await sharp(`${__dirname}/../assets/32x32.png`)
-    .resize(18, 18)
+    .resize(iconSize, iconSize)
     .background({r: 0, g: 0, b: 0, alpha: 0})
-    .extend({top: 1, bottom: 1, left: 2, right: 2})
+    .extend(iconPadding)
     .png();
 
   _iconBuffer = await icon.toBuffer();
   _iconBufferGrey = await icon.greyscale().toBuffer();
 
   _tray = new Tray(nativeImage.createFromBuffer(_iconBufferGrey));
-  _tray.setToolTip('Circuit Tray App');
+  _tray.setToolTip('Circuit Chat');
   _tray.setHighlightMode(false);
 
   const domain = settings.get('domain');
   _signinTemplate = [
     {
       label: 'Open Circuit',
-      click () { opn(`https://${domain}`, {app: 'google chrome'}); }
+      click () { opn(`https://${domain}`, {app: chrome}); }
     },
     {
       label: 'Preferences...',

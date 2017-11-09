@@ -48,6 +48,9 @@ class TrayItem {
   async init() {
     try {
       const roundedCorners = new Buffer('<svg><rect x="0" y="0" width="18" height="18" rx="9" ry="9"/></svg>');
+      const isMac = process.platform === 'darwin';
+      const iconSize = isMac ? 18 : 19;
+      const iconPadding = isMac ? {top: 1, bottom: 1, left: 2, right: 2} : {top: 0, bottom: 0, left: 0, right: 0};
 
       // Download the user's avatar, resize it, make round corners, position it,
       // convert to png for transparency, convert it to a nativeImage and show it.
@@ -59,17 +62,17 @@ class TrayItem {
       // Resize avatar, make round corners, position it and convert to png for
       // transparency and save as buffer
       this._avatarBuffer = await sharp(file)
-        .resize(18, 18)
+        .resize(iconSize, iconSize)
         .overlayWith(roundedCorners, {cutout: true})
-        .extend({top: 1, bottom: 1, left: 2, right: 2})
+        .extend(iconPadding)
         .png()
         .toBuffer();
 
       // Buffer for call icon
       this._callBuffer = await sharp(`${__dirname}/../assets/call.png`)
-        .resize(18, 18)
+        .resize(iconSize, iconSize)
         .overlayWith(roundedCorners, {cutout: true})
-        .extend({top: 1, bottom: 1, left: 2, right: 2})
+        .extend(iconPadding)
         .png()
         .toBuffer();
 
