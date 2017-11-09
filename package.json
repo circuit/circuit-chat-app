@@ -1,7 +1,6 @@
 {
   "name": "circuit-chat-app",
   "productName": "Circuit Chat",
-  "version": "1.0.1",
   "description": "Cicuit tray chat app written with Circuit JS SDK",
   "main": "./app/main",
   "scripts": {
