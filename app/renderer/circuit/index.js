@@ -43,7 +43,7 @@ function proxySdkEvents() {
           callId = evt.call.callId;
           if (evt.reason === 'remoteStreamUpdated') {
             // Attach the stream to the audio element
-            remoteAudio.src = evt.call.remoteAudioUrl;
+            remoteAudio.srcObject = evt.call.remoteAudioStream;
           }
         }
       }
