@@ -69,3 +69,5 @@ app/config.json
 dist
 
 yarn.lock
+
+mac.png
