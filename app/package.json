@@ -8,7 +8,7 @@
   "main": "main/index.js",
   "dependencies": {
     "auto-launch": "^5.0.1",
-    "circuit-sdk": "^1.2.1900",
+    "circuit-sdk": "^1.2.4502",
     "electron-oauth2": "git://github.com/rogeru/electron-oauth2.git#master",
     "electron-settings": "^3.1.3",
     "hyperhtml": "^1.12.2",
