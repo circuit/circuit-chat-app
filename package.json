@@ -33,7 +33,7 @@
   "author": "Roger Urscheler <roger.urscheler@unify.com>",
   "license": "Apache-2.0",
   "devDependencies": {
-    "electron": "^1.8.1",
+    "electron": "^1.8.8",
     "electron-builder": "^19.35.1"
   }
 }
