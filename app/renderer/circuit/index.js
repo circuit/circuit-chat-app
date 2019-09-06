@@ -1,5 +1,4 @@
-const {app, ipcRenderer, remote} = require('electron');
-const settings = require('electron-settings');
+const {ipcRenderer, remote} = require('electron');
 
 let client, user, callId;
 let remoteAudio = document.getElementById('remoteAudio');

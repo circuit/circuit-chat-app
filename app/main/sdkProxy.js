@@ -152,6 +152,9 @@ class SdkProxy extends EventEmitter {
       this._win = new BrowserWindow({
         width: 1200,
         height: 900,
+        webPreferences: {
+          nodeIntegration: true
+        },
         show: isDevMode
       });
       this._win.loadURL(`file://${path.join(__dirname, '../renderer/circuit/index.html')}`);

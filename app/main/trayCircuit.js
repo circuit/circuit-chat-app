@@ -26,7 +26,7 @@ async function create(emitter, sdkProxy) {
   // Create Circuit tray
   let icon = await sharp(`${__dirname}/../assets/32x32.png`)
     .resize(iconSize, iconSize)
-    .background({r: 0, g: 0, b: 0, alpha: 0})
+    //.background({r: 0, g: 0, b: 0, alpha: 0})
     .extend(iconPadding)
     .png();
 
@@ -35,7 +35,7 @@ async function create(emitter, sdkProxy) {
 
   _tray = new Tray(nativeImage.createFromBuffer(_iconBufferGrey));
   _tray.setToolTip('Circuit Chat');
-  _tray.setHighlightMode(false);
+  //_tray.setHighlightMode(false);
 
   const domain = settings.get('domain');
   _signinTemplate = [

@@ -63,7 +63,7 @@ class TrayItem {
       // transparency and save as buffer
       this._avatarBuffer = await sharp(file)
         .resize(iconSize, iconSize)
-        .overlayWith(roundedCorners, {cutout: true})
+       // .overlayWith(roundedCorners, {cutout: true})
         .extend(iconPadding)
         .png()
         .toBuffer();
@@ -71,7 +71,7 @@ class TrayItem {
       // Buffer for call icon
       this._callBuffer = await sharp(`${__dirname}/../assets/call.png`)
         .resize(iconSize, iconSize)
-        .overlayWith(roundedCorners, {cutout: true})
+       // .overlayWith(roundedCorners, {cutout: true})
         .extend(iconPadding)
         .png()
         .toBuffer();
@@ -104,7 +104,7 @@ class TrayItem {
     let avatar = nativeImage.createFromBuffer(this._avatarBuffer);
     this._tray = new Tray(avatar);
     this._tray.setToolTip(this._conversation.peerUser.displayName);
-    this._tray.setHighlightMode(false);
+   // this._tray.setHighlightMode(false);
     this.renderIcon();
     console.log(`Created tray for ${this._conversation.peerUser.displayName} (${this._presenceState})`);
 
