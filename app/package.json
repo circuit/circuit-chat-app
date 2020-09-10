@@ -12,7 +12,7 @@
     "electron-oauth2": "git://github.com/rogeru/electron-oauth2.git#master",
     "electron-settings": "^3.2.0",
     "hyperhtml": "^2.30.5",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "opn": "^5.1.0",
     "request": "^2.88.0",
     "sharp": "^0.23.0"
